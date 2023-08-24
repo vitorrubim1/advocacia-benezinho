@@ -1,13 +1,32 @@
 package br.com.fiap.domain.entity;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "TB_ADVOGADO",  uniqueConstraints = {
+        @UniqueConstraint(name = "UK_NMR_OAB_ADVOGADO", columnNames = {"NMR_OAB_ADVOGADO"})
+})
 public class Advogado {
 
+    @Id
+    @Column(name = "ID_ADVOGADO")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_ADVOGADO")
+    @SequenceGenerator(name = "SQ_ADVOGADO", sequenceName = "SQ_ADVOGADO")
     private Long id;
 
+    @Column(name = "NM_ADVOGADO")
     private String nome;
 
+    @Column(name = "NMR_OAB_ADVOGADO", nullable = false, unique = true)
     private String numeroOAB;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(
+            name = "ID_ESTADO",
+            referencedColumnName = "ID_ESTADO",
+            foreignKey = @ForeignKey(name = "FK_ESTADO_ADVOGADO"),
+            nullable = false
+    )
     private Estado estado;
 
     public Advogado() {
@@ -64,6 +83,4 @@ public class Advogado {
                 ", numeroOAB='" + numeroOAB + '\'' +
                 '}';
     }
-
-
 }
